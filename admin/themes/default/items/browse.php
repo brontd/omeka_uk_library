@@ -1,6 +1,6 @@
 <?php
 queue_js_file('items-browse');
-$pageTitle = __('Browse Items ') . ' ' . __('(%s total)', $total_results);
+$pageTitle = __('Browse Items') . ' ' . __('(%s total)', $total_results);
 echo head(
     array(
         'title' => $pageTitle,
@@ -44,18 +44,13 @@ echo item_search_filters();
                     <?php endif; ?>
                     <?php
                     $browseHeadings[__('Title')] = 'Dublin Core,Title';
-                    $browseHeadings[__('Collection')] = 'Project Title';
+                    // Changed table data per Kopana. Replaced creator and title with collection and accession -bd 11.19.24
                     // $browseHeadings[__('Creator')] = 'Dublin Core,Creator';
                     // $browseHeadings[__('Type')] = null;
+                    $browseHeadings[__('Collection')] = 'Project Title'; 
                     $browseHeadings[__('Interview Accession')] = 'Interview Accession';
-
                     $browseHeadings[__('Date Added')] = 'added';
-
-                    // $browseHeadings[__('Collection')] = 'Collection';
-                    
                     echo browse_sort_links($browseHeadings, array('link_tag' => 'th scope="col"', 'list_tag' => ''));
-
-                    $remove1 = "remove";
                     ?>
                 </tr>
             </thead>
@@ -63,10 +58,7 @@ echo item_search_filters();
                 <?php $key = 0; ?>
                 <?php foreach (loop('Item') as $item): ?>
                 <tr class="item <?php if(++$key%2==1) echo 'odd'; else echo 'even'; ?>">
-                    <?php 
-                        $id = metadata('item', 'id'); 
-                        $remove2 = "remove";
-                    ?>
+                    <?php $id = metadata('item', 'id'); ?>
 
                     <?php if (is_allowed($item, 'edit') || is_allowed($item, 'tag')): ?>
                     <td class="batch-edit-check">
@@ -116,68 +108,29 @@ echo item_search_filters();
 
                         <?php fire_plugin_hook('admin_items_browse_simple_each', array('item' => $item, 'view' => $this)); ?>
 
-                        <div class="details">
-                            <?php $itemDescription = snippet_by_word_count(metadata('item', array('Dublin Core', 'Description')), 40); ?>
-                            <?php if ($itemDescription !== ''): ?>
-                                <p class="description"><?php echo $itemDescription; ?></p>
-                            <?php endif; ?>
-                            <p>
-                                <strong><?php echo __('Collection'); ?>:</strong>
-                                <?php echo link_to_collection_for_item(); ?>
-                            </p>
-                            <p>
-                                <strong><?php echo __('Tags'); ?>:</strong>
-                                <?php if ($tags = tag_string('items')) echo $tags; else echo __('No Tags'); ?>
-                            </p>
-                            <?php fire_plugin_hook('admin_items_browse_detailed_each', array('item' => $item, 'view' => $this)); ?>
-                        </div>
+                        <!-- Removed Details box... Pulling collection and accession# into the main table, rendered it superfluous | bd 11.19.24 -->
+                        <!-- See also commented JS code below... Omeka.ItemsBrowse.setupDetails    --> 
+                        <!-- Hide/Show Details Box -->
+                        <!-- <div class="details"> -->
+                        <!-- </div> -->
+                        
                     </td>
-
                     <td>
-                        <!-- dublin core creator td  -->
-                        <?php 
-                            // echo strip_formatting(metadata('item', array('Collection', 'title'))); 
-                            // $met = metadata('item', array('Collection', 'title')); 
-                            
-                            $collection = get_collection_for_item();
-                            if ($collection) {
-                                $collection_title =  metadata($collection, array('Dublin Core', 'Title'));
-                            } else {
-                                $collection_title = "";
-                            }
-
-                            // $x =  metadata($collection, array('Dublin Core', 'Title'));
-                            echo $collection_title;   
-                            // $project = metadata($collection, array('Project', 'Project Code'));
-                            $remove8 = "";
-                        ?>
-                    </td>
-                    <!-- <td></td> -->
-                    <!-- <td> -->
-                        <!-- dublin core creator td  -->
-                        <?php // echo metadata('item', array('Dublin Core', 'Creator')); ?>
-                    <!-- </td> -->
-                    <!-- <td> -->
                         <?php
-                        // Type
-                        // echo ($typeName = metadata('item', 'Item Type Name'))
-                            // ? $typeName
-                            // : metadata('item', array('Dublin Core', 'Type'), array('snippet' => 35));
-                        ?>
-                    <!-- </td> -->
-                    
-                    <td>
-                        <!-- desc added -->
-                        <?php 
-                            // echo format_date(metadata('item', array ('General', 'Interview Accession')); 
-                            echo(metadata('item', array ('General', 'Interview Accession'))); 
-                            $remove = "remove me";
-                        ?>
-                    </td>    
-                    <td>
-                        <!-- Date added -->
-                        <?php echo format_date(metadata('item', 'added')); ?>
+                            // Custom link to collection | bd 11.19.24 
+                            echo link_to_collection_for_item();
+                        ?> 
                     </td>
+                    <td>
+                        <?php
+                            // Custom link to collection | bd 11.19.24 
+                            echo(metadata('item', array ('General', 'Interview Accession'))); 
+                            // echo ($typeName = metadata('item', 'Item Type Name'))
+                                // ? $typeName
+                                // : metadata('item', array('Dublin Core', 'Type'), array('snippet' => 35));
+                        ?>
+                    </td>
+                    <td><?php echo format_date(metadata('item', 'added')); ?></td>
                 </tr>
                 <?php endforeach; ?>
             </tbody>
@@ -210,15 +163,16 @@ echo item_search_filters();
     <?php echo output_format_list(false); ?>
     </div>
 
-    <script type="text/javascript">
-    Omeka.addReadyCallback(Omeka.ItemsBrowse.setupDetails, [
-        <?php echo js_escape(__('Details')); ?>,
-        <?php echo js_escape(__('Show Details')); ?>,
-        <?php echo js_escape(__('Hide Details')); ?>
-    ]);
-    Omeka.addReadyCallback(Omeka.ItemsBrowse.setupBatchEdit);
-    Omeka.addReadyCallback(Omeka.quickFilter);
-    </script>
+    <!-- Disabled... not using Details box | bd 11.19.24 -->
+    <!-- <script type="text/javascript"> -->
+    <!-- Omeka.addReadyCallback(Omeka.ItemsBrowse.setupDetails, [ -->
+        <!-- <?php // echo js_escape(__('Details')); ?> , -->
+        <!-- <?php // echo js_escape(__('Show Details')); ?> , -->
+        <?php // echo js_escape(__('Hide Details')); ?>
+    <!-- ]); -->
+    <!-- Omeka.addReadyCallback(Omeka.ItemsBrowse.setupBatchEdit); -->
+    <!-- Omeka.addReadyCallback(Omeka.quickFilter); -->
+    <!-- </script> -->
 
 <?php else: ?>
     <?php $total_items = total_records('Item'); ?>
