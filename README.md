@@ -28,3 +28,9 @@ licenses.
 
 Release notes for Omeka are available at
 [http://omeka.org/codex/Release_Notes](http://omeka.org/codex/Release_Notes).
+
+# Updates
+
+[SimpleVocab plugin](https://github.com/brontd/spoke_db_plugins_SimpleVocab) required change to /libraries/SimpleVocab/Controller/Plugin/SelectFilter.php
+
+Spoke Omeka /admin/themes/default/items/browse.php... changed layout of items, removed Details box and added Collection and Accession to primary table view...
