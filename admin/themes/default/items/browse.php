@@ -47,7 +47,7 @@ echo item_search_filters();
                     // Changed table data per Kopana. Replaced creator and title with collection and accession -bd 11.19.24
                     // $browseHeadings[__('Creator')] = 'Dublin Core,Creator';
                     // $browseHeadings[__('Type')] = null;
-                    $browseHeadings[__('Collection')] = 'Project Title';
+                    // $browseHeadings[__('Collection')] = 'Project Title'; 
                     $browseHeadings[__('Rights')] = 'Restrictions'; 
                     $browseHeadings[__('Interview Accession')] = 'Interview Accession';
                     $browseHeadings[__('Date Added')] = 'added';
@@ -118,13 +118,7 @@ echo item_search_filters();
                     </td>
                     <td>
                         <?php
-                            // Custom link to collection | bd 11.19.24 
-                            echo link_to_collection_for_item();
-                        ?> 
-                    </td>
-                   <td>
-                        <?php
-                            echo(metadata('item', array ('Rights', 'Interview Restriction Details'))); 
+                            echo(metadata('item', array ('Dublin Core', 'Rights'))); 
                         ?>
                     </td>
                     <td>
@@ -135,7 +129,7 @@ echo item_search_filters();
                     <td>
                         <?php echo format_date(metadata('item', 'added')); ?>
                     </td>
-                    
+
                 </tr>
                 <?php endforeach; ?>
             </tbody>
